@@ -18,9 +18,9 @@ public:
 
 vector <Ponto> pontos;
 
-unsigned long long fatorial(int n)
+double fatorial(int n)
 {
-	long long resposta;
+	double resposta;
 
 	if (n <= 1)
 	{
@@ -40,9 +40,9 @@ unsigned long long fatorial(int n)
 	return resposta;
 }
 
-unsigned long long coeficiente_binomial(int n, int k)
+double coeficiente_binomial(int n, int k)
 {
-	float resposta;
+	double resposta;
 	resposta = fatorial (n) / (fatorial (k) * fatorial (n - k));
 	return resposta;
 }
@@ -52,7 +52,7 @@ Ponto desenhaBezier(double t) {
 	int quantidade = pontos.size();
 	for (int i = 0; i < quantidade; i++)
 	{
-		float aux = coeficiente_binomial((quantidade - 1), i) * pow((1 - t), (quantidade - 1 - i)) * pow(t, i);
+		double aux = coeficiente_binomial((quantidade - 1), i) * pow((1 - t), (quantidade - 1 - i)) * pow(t, i);
 		p.x = p.x + (aux * pontos.at(i).x);
 		p.y = p.y + (aux * pontos.at(i).y);
 	}
@@ -75,10 +75,16 @@ void display()
 
 		glBegin(GL_LINE_STRIP);
 		glColor3f(1.0f, 1.0f, 1.0f);
-		for (double t = 0.0; t <= 1.0; t += 0.01)
+
+		double t;
+
+		for (t = 0.0; t <= 1.0; t += 0.01)
 		{
 			glVertex2d(desenhaBezier(t).x, desenhaBezier(t).y);
 		}
+
+		glVertex2d(desenhaBezier(t).x, desenhaBezier(t).y);
+
 		glEnd();
 	}
 
@@ -123,19 +129,21 @@ int indicePonto(int x, int y) {
 	return resposta;
 }
 
+int i;
+
 void handleMouseClick(int button, int state, int x, int y)
 {
-	int i = indicePonto(x, y);
+	i = indicePonto(x, y);
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
 		if (i == -1){
 			pontos.push_back(Ponto(x, y));
+			i = pontos.size() - 1;
 		}
 	}
 	glutPostRedisplay();  // avisa que a janela atual deve ser reimpressa
 }
 
 void drag(int x, int y){
-	int i = indicePonto(x, y);
 	if (i > -1){
 		pontos.at(i) = Ponto(x, y);
 	}
